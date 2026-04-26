@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#07111f" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<title>Modo 98</title>
+
+<style>
+:root{
+  --bg:#050914;--card:#111827;--card2:#1f2937;--text:#f8fafc;
+  --muted:#94a3b8;--green:#22c55e;--yellow:#f59e0b;
+  --red:#ef4444;--blue:#38bdf8;--purple:#a78bfa;--line:rgba(255,255,255,.1)
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:linear-gradient(180deg,#07111f,var(--bg));color:var(--text);padding-bottom:90px
+}
+header{padding:24px 18px 8px}
+h1{margin:0;font-size:36px}
+h2,h3{margin-top:0}
+a{color:var(--blue);font-weight:800;text-decoration:none}
+.container{padding:12px 16px}
+.card{
+  background:rgba(17,24,39,.92);border:1px solid var(--line);
+  border-radius:24px;padding:18px;margin-bottom:14px
+}
+.hero{background:linear-gradient(135deg,rgba(56,189,248,.25),rgba(34,197,94,.12))}
+.muted{color:var(--muted)}
+.row{display:flex;justify-content:space-between;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.score{font-size:46px;font-weight:900}
+button{
+  border:0;border-radius:17px;padding:14px 16px;background:var(--card2);
+  color:white;font-weight:800;font-size:15px
+}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.primary{background:var(--blue);color:#00111a}
+.green{background:var(--green);color:#021108}
+.yellow{background:var(--yellow);color:#1a1000}
+.red{background:var(--red)}
+.purple{background:var(--purple);color:#14071f}
+input[type=checkbox]{width:27px;height:27px;accent-color:var(--green)}
+input,textarea{
+  width:100%;padding:14px;border-radius:16px;border:1px solid var(--line);
+  background:#020617;color:white;font-size:16px
+}
+textarea{min-height:80px}
+.photoBox{
+  min-height:160px;border:1px dashed var(--line);border-radius:20px;
+  display:grid;place-items:center;overflow:hidden
+}
+.photoBox img{width:100%}
+input[type=file]{display:none}
+.pill{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.08);font-size:13px}
+.page{display:none}
+.page.active{display:block}
+nav{
+  position:fixed;bottom:0;left:0;right:0;background:rgba(2,6,23,.94);
+  display:grid;grid-template-columns:repeat(5,1fr);gap:6px;
+  padding:10px 10px max(10px,env(safe-area-inset-bottom));border-top:1px solid var(--line)
+}
+nav button{font-size:11px;padding:10px 4px}
+nav button.active{background:var(--blue);color:#00111a}
+</style>
+</head>
+
+<body>
+<header>
+  <h1>Modo 98</h1>
+  <p class="muted">Bajar grasa. Entrenar fuerza. Controlar alcohol. Dormir mejor.</p>
+</header>
+
+<main class="container">
+
+<section id="hoy" class="page active">
+  <div class="card hero">
+    <div class="muted">Progreso de hoy</div>
+    <div class="score"><span id="doneCount">0</span>/6</div>
+    <p class="muted">Objetivo: cumplir mínimo 5 hábitos</p>
+  </div>
+
+  <div class="card">
+    <h3>Hábitos</h3>
+    <div id="habits"></div>
+  </div>
+
+  <div class="card">
+    <h3>Coach</h3>
+    <p id="coachToday" class="muted"></p>
+  </div>
+</section>
+
+<section id="comida" class="page">
+  <div class="card">
+    <h3>Foto comida</h3>
+    <div class="photoBox" id="photoPreview"><span class="muted">Haz o sube foto</span></div>
+    <br>
+    <button class="primary" onclick="document.getElementById('foodPhoto').click()">Hacer foto</button>
+    <input id="foodPhoto" type="file" accept="image/*" capture="environment" onchange="previewFoodPhoto(event)">
+    <button onclick="clearPhoto()">Quitar foto</button>
+  </div>
+
+  <div class="card">
+    <h3>Registrar comida</h3>
+    <textarea id="mealNote" placeholder="Ej: pollo con arroz, ensalada, fuet..."></textarea>
+    <br><br>
+    <div class="grid">
+      <button class="green" onclick="addMeal('Bien')">Bien</button>
+      <button class="yellow" onclick="addMeal('Regular')">Regular</button>
+      <button class="red" onclick="addMeal('Me he pasado')">Me he pasado</button>
+      <button onclick="addMeal('Snack')">Snack</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Últimas comidas</h3>
+    <div id="mealList" class="muted"></div>
+  </div>
+</section>
+
+<section id="alcohol" class="page">
+  <div class="card hero">
+    <div class="muted">Alcohol semanal</div>
+    <div class="score"><span id="drinkCount">0</span>/4</div>
+    <p id="drinkMsg" class="muted"></p>
+  </div>
+
+  <div class="card">
+    <h3>Registrar bebida</h3>
+    <div class="grid">
+      <button onclick="addDrink('Vermut')">Vermut</button>
+      <button onclick="addDrink('Copa vino')">Copa vino</button>
+      <button onclick="addDrink('Gin-tonic')">Gin-tonic</button>
+      <button onclick="addDrink('Cerveza')">Cerveza</button>
+    </div>
+    <br>
+    <button onclick="undoDrink()">Deshacer última</button>
+  </div>
+
+  <div class="card">
+    <h3>Historial</h3>
+    <div id="drinkList" class="muted"></div>
+  </div>
+</section>
+
+<section id="entreno" class="page">
+  <div class="card hero">
+    <div class="muted">Modo entrenamiento PRO</div>
+    <h2 id="workoutTitle">Elige rutina</h2>
+    <p id="workoutSubtitle" class="muted">Entrena con técnica y sin prisas.</p>
+    <div class="grid">
+      <button class="primary" onclick="startWorkout('A')">Rutina A</button>
+      <button class="purple" onclick="startWorkout('B')">Rutina B</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Espalda baja</h3>
+    <input id="backPain" type="number" min="0" max="10" placeholder="Dolor 0-10">
+    <br><br>
+    <button class="primary" onclick="coachWorkout()">Ver recomendación</button>
+    <p id="workoutAdvice" class="muted"></p>
+  </div>
+
+  <div class="card">
+    <h3>Ejercicios guiados</h3>
+    <div id="guidedWorkout" class="muted">Selecciona Rutina A o B.</div>
+  </div>
+
+  <div class="card">
+    <h3>Descanso</h3>
+    <div class="score"><span id="timer">60</span>s</div>
+    <div class="grid">
+      <button onclick="startTimer(60)">60s</button>
+      <button onclick="startTimer(90)">90s</button>
+      <button onclick="stopTimer()">Parar</button>
+      <button onclick="resetExercises()">Reset</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Entrenos esta semana</h3>
+    <div id="workoutList" class="muted"></div>
+  </div>
+</section>
+
+<section id="progreso" class="page">
+  <div class="card hero">
+    <div class="muted">Objetivo fase 1</div>
+    <div class="score">98 kg</div>
+    <p class="muted">Peso inicial: 105 kg</p>
+  </div>
+
+  <div class="card">
+    <h3>Guardar peso</h3>
+    <input id="weightInput" type="number" step="0.1" placeholder="Ej: 104.5">
+    <br><br>
+    <button class="primary" onclick="saveWeight()">Guardar</button>
+  </div>
+
+  <div class="card">
+    <h3>Resumen</h3>
+    <p>Último peso: <b id="lastWeight">—</b></p>
+    <p>Alcohol: <b id="summaryDrinks">0/4</b></p>
+    <p>Entrenos: <b id="summaryWorkouts">0/3</b></p>
+    <p>Días buenos: <b id="summaryDays">0</b></p>
+  </div>
+
+  <div class="card">
+    <h3>Revisión coach</h3>
+    <p id="weeklyCoach" class="muted"></p>
+  </div>
+
+  <div class="card">
+    <button class="red" onclick="resetAll()">Borrar datos</button>
+  </div>
+</section>
+
+</main>
+
+<nav>
+  <button class="active" onclick="showPage('hoy')">Hoy</button>
+  <button onclick="showPage('comida')">Comida</button>
+  <button onclick="showPage('alcohol')">Alcohol</button>
+  <button onclick="showPage('entreno')">Entreno</button>
+  <button onclick="showPage('progreso')">Progreso</button>
+</nav>
+
+<script>
+const HABITS=[
+  "Caminar 8.000 pasos",
+  "Proteína en comida y cena",
+  "Verdura en 2 comidas",
+  "Alcohol dentro del límite",
+  "Entreno o movilidad",
+  "Dormir mejor"
+];
+
+const WORKOUTS={
+  A:{
+    title:"Rutina A",
+    subtitle:"Piernas + espalda + pecho + glúteo + core",
+    exercises:[
+      ["Prensa de piernas","3x10","Espalda pegada al respaldo. Baja controlado.","https://www.youtube.com/results?search_query=prensa+de+piernas+t%C3%A9cnica"],
+      ["Jalón al pecho","3x10","Pecho arriba. Tira con los codos hacia abajo.","https://www.youtube.com/results?search_query=jal%C3%B3n+al+pecho+t%C3%A9cnica"],
+      ["Press pecho máquina","3x10","Controla la bajada. No rebotes.","https://www.youtube.com/results?search_query=press+pecho+m%C3%A1quina+t%C3%A9cnica"],
+      ["Remo sentado","3x10","No tires con la espalda baja.","https://www.youtube.com/results?search_query=remo+sentado+t%C3%A9cnica"],
+      ["Puente de glúteo","3x12","Aprieta glúteo arriba. No arquees lumbar.","https://www.youtube.com/results?search_query=puente+de+gl%C3%BAteo+t%C3%A9cnica"],
+      ["Dead bug","3x8/lado","Lumbar pegada al suelo. Movimiento lento.","https://www.youtube.com/results?search_query=dead+bug+ejercicio+t%C3%A9cnica"]
+    ]
+  },
+  B:{
+    title:"Rutina B",
+    subtitle:"Tren superior + pierna ligera + core",
+    exercises:[
+      ["Sentadilla goblet ligera","3x10","Abdomen firme y espalda neutra.","https://www.youtube.com/results?search_query=sentadilla+goblet+t%C3%A9cnica"],
+      ["Press hombro máquina","3x10","No arquees la espalda.","https://www.youtube.com/results?search_query=press+hombro+m%C3%A1quina+t%C3%A9cnica"],
+      ["Remo máquina","3x10","Codos atrás y pecho estable.","https://www.youtube.com/results?search_query=remo+m%C3%A1quina+t%C3%A9cnica"],
+      ["Curl femoral","3x12","Controla el movimiento.","https://www.youtube.com/results?search_query=curl+femoral+t%C3%A9cnica"],
+      ["Pallof press","3x10/lado","Resiste la rotación.","https://www.youtube.com/results?search_query=pallof+press+t%C3%A9cnica"],
+      ["Plancha lateral","3x20-30s/lado","Cuerpo recto. No caigas de cadera.","https://www.youtube.com/results?search_query=plancha+lateral+t%C3%A9cnica"]
+    ]
+  }
+};
+
+const KEY="modo98.v5";
+let state=JSON.parse(localStorage.getItem(KEY))||{days:{},drinks:[],meals:[],workouts:[],weights:[]};
+let activeWorkout=localStorage.getItem("activeWorkout")||null;
+let exerciseChecks=JSON.parse(localStorage.getItem("exerciseChecks")||"{}");
+let pendingPhoto=null;
+let timerInterval=null;
+
+function todayKey(){return new Date().toISOString().slice(0,10)}
+function ensureToday(){if(!state.days[todayKey()])state.days[todayKey()]={habits:{}}}
+function save(){ensureToday();localStorage.setItem(KEY,JSON.stringify(state));render()}
+function weekStart(){let d=new Date();let day=d.getDay()||7;d.setHours(0,0,0,0);d.setDate(d.getDate()-day+1);return d}
+function isThisWeek(date){return new Date(date)>=weekStart()}
+function weeklyDrinks(){return state.drinks.filter(x=>isThisWeek(x.date))}
+function weeklyWorkouts(){return state.workouts.filter(x=>isThisWeek(x.date))}
+function habits(){ensureToday();return state.days[todayKey()].habits}
+function doneToday(){return Object.values(habits()).filter(Boolean).length}
+
+function renderHabits(){
+  let box=document.getElementById("habits");
+  box.innerHTML="";
+  HABITS.forEach((h,i)=>{
+    box.innerHTML+=`
+      <div class="row">
+        <span>${h}</span>
+        <input type="checkbox" ${habits()[i]?"checked":""} onchange="toggleHabit(${i})">
+      </div>`;
+  });
+  document.getElementById("doneCount").innerText=doneToday();
+}
+
+function toggleHabit(i){habits()[i]=!habits()[i];save()}
+
+function addDrink(type){
+  state.drinks.push({type,date:new Date().toISOString(),label:new Date().toLocaleString("es-ES")});
+  habits()[3]=weeklyDrinks().length+1<=4;
+  save();
+}
+function undoDrink(){state.drinks.pop();save()}
+
+function addMeal(rating){
+  let note=document.getElementById("mealNote").value.trim();
+  state.meals.unshift({rating,note,date:new Date().toISOString(),label:new Date().toLocaleString("es-ES")});
+  if(rating==="Bien"){habits()[1]=true;habits()[2]=true}
+  document.getElementById("mealNote").value="";
+  clearPhoto();
+  save();
+}
+
+function previewFoodPhoto(e){
+  let file=e.target.files[0]; if(!file)return;
+  let reader=new FileReader();
+  reader.onload=x=>{
+    pendingPhoto=x.target.result;
+    document.getElementById("photoPreview").innerHTML=`<img src="${pendingPhoto}">`;
+  };
+  reader.readAsDataURL(file);
+}
+function clearPhoto(){
+  pendingPhoto=null;
+  document.getElementById("foodPhoto").value="";
+  document.getElementById("photoPreview").innerHTML='<span class="muted">Haz o sube foto</span>';
+}
+
+function startWorkout(type){
+  activeWorkout=type;
+  exerciseChecks={};
+  localStorage.setItem("activeWorkout",type);
+  localStorage.setItem("exerciseChecks",JSON.stringify(exerciseChecks));
+  renderGuidedWorkout();
+}
+
+function renderGuidedWorkout(){
+  let box=document.getElementById("guidedWorkout");
+  if(!activeWorkout){
+    box.innerHTML="Selecciona Rutina A o B.";
+    return;
+  }
+  let w=WORKOUTS[activeWorkout];
+  document.getElementById("workoutTitle").innerText=w.title;
+  document.getElementById("workoutSubtitle").innerText=w.subtitle;
+
+  let completed=w.exercises.filter((_,i)=>exerciseChecks[activeWorkout+"-"+i]).length;
+  let html=`<p><b>Progreso:</b> ${completed}/${w.exercises.length}</p>`;
+
+  w.exercises.forEach((ex,i)=>{
+    let key=activeWorkout+"-"+i;
+    html+=`
+      <div class="row">
+        <div>
+          <b>${i+1}. ${ex[0]}</b><br>
+          <span class="pill">${ex[1]}</span><br><br>
+          <span class="muted">${ex[2]}</span><br><br>
+          <a href="${ex[3]}" target="_blank">▶ Ver tutorial</a>
+        </div>
+        <input type="checkbox" ${exerciseChecks[key]?"checked":""} onchange="toggleExercise('${key}')">
+      </div>`;
+  });
+
+  html+=`<br><button class="green" onclick="completeWorkout()">Finalizar entrenamiento</button>`;
+  box.innerHTML=html;
+}
+
+function toggleExercise(key){
+  exerciseChecks[key]=!exerciseChecks[key];
+  localStorage.setItem("exerciseChecks",JSON.stringify(exerciseChecks));
+  renderGuidedWorkout();
+}
+function resetExercises(){
+  exerciseChecks={};
+  localStorage.setItem("exerciseChecks",JSON.stringify(exerciseChecks));
+  renderGuidedWorkout();
+}
+function completeWorkout(){
+  let w=WORKOUTS[activeWorkout];
+  let completed=w.exercises.filter((_,i)=>exerciseChecks[activeWorkout+"-"+i]).length;
+  if(completed<w.exercises.length && !confirm(`Has completado ${completed}/${w.exercises.length}. ¿Finalizar igualmente?`)) return;
+  state.workouts.push({type:w.title,date:new Date().toISOString(),label:new Date().toLocaleDateString("es-ES")});
+  habits()[4]=true;
+  resetExercises();
+  save();
+  alert("Entrenamiento guardado");
+}
+
+function coachWorkout(){
+  let p=Number(document.getElementById("backPain").value);
+  let msg="Introduce dolor 0-10.";
+  if(p<=3)msg="Puedes entrenar normal, cuidando técnica.";
+  else if(p<=6)msg="Entreno suave: máquinas, core y glúteo. Evita cargas agresivas.";
+  else msg="Hoy no fuerza pesada. Caminata suave y movilidad.";
+  document.getElementById("workoutAdvice").innerText=msg;
+}
+
+function startTimer(sec){
+  stopTimer();
+  let r=sec;
+  document.getElementById("timer").innerText=r;
+  timerInterval=setInterval(()=>{
+    r--;document.getElementById("timer").innerText=r;
+    if(r<=0){stopTimer();alert("Descanso terminado")}
+  },1000);
+}
+function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null}}
+
+function saveWeight(){
+  let v=Number(document.getElementById("weightInput").value);
+  if(!v)return;
+  state.weights.push({value:v,date:new Date().toISOString(),label:new Date().toLocaleDateString("es-ES")});
+  document.getElementById("weightInput").value="";
+  save();
+}
+
+function coachToday(){
+  let d=weeklyDrinks().length,w=weeklyWorkouts().length,done=doneToday();
+  if(d>4)return"El mayor freno ahora mismo es el alcohol. Prioridad: volver al límite.";
+  if(w<2)return"Prioridad semanal: mínimo 2 sesiones de fuerza.";
+  if(done<3)return"Hoy vas corto. Suma una acción fácil ahora.";
+  return"Buen rumbo. Mantén proteína, pasos, fuerza y alcohol controlado.";
+}
+
+function render(){
+  ensureToday();
+  renderHabits();
+  renderGuidedWorkout();
+
+  let drinks=weeklyDrinks();
+  document.getElementById("drinkCount").innerText=drinks.length;
+  document.getElementById("summaryDrinks").innerText=drinks.length+"/4";
+  document.getElementById("drinkMsg").innerText=drinks.length<=2?"Vas bien.":drinks.length<=4?"Cerca del límite.":"Has superado el límite.";
+  document.getElementById("drinkList").innerHTML=drinks.length?drinks.map(x=>`<div class="row"><span>${x.type}</span><span class="pill">${x.label}</span></div>`).join(""):"Sin bebidas esta semana.";
+
+  document.getElementById("mealList").innerHTML=state.meals.length?state.meals.map(x=>`<div class="row"><div><b>${x.rating}</b><br><span class="muted">${x.note||"Sin nota"}</span></div><span class="pill">${x.label}</span></div>`).join(""):"Sin comidas.";
+
+  let workouts=weeklyWorkouts();
+  document.getElementById("workoutList").innerHTML=workouts.length?workouts.map(x=>`<div class="row"><span>${x.type}</span><span class="pill">${x.label}</span></div>`).join(""):"Sin entrenos esta semana.";
+  document.getElementById("summaryWorkouts").innerText=workouts.length+"/3";
+
+  let lw=state.weights[state.weights.length-1];
+  document.getElementById("lastWeight").innerText=lw?lw.value+" kg":"—";
+
+  document.getElementById("summaryDays").innerText=Object.values(state.days).filter(d=>Object.values(d.habits||{}).filter(Boolean).length>=5).length;
+  document.getElementById("coachToday").innerText=coachToday();
+  document.getElementById("weeklyCoach").innerText=coachToday();
+}
+
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+  const map={hoy:0,comida:1,alcohol:2,entreno:3,progreso:4};
+  document.querySelectorAll("nav button")[map[id]].classList.add("active");
+  render();
+}
+
+function resetAll(){
+  if(confirm("¿Borrar todos los datos?")){
+    localStorage.clear();
+    location.reload();
+  }
+}
+
+render();
+</script>
+</body>
+</html>
