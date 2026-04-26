@@ -1,7 +1,7 @@
 {
-  "name": "Modo 98",
-  "short_name": "Modo98",
-  "description": "Coach personal para perder grasa, entrenar fuerza y controlar hábitos.",
+  "name": "PauFit",
+  "short_name": "PauFit",
+  "description": "Coach personal para alimentación, entrenamiento y hábitos.",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",
@@ -9,5 +9,12 @@
   "background_color": "#050914",
   "theme_color": "#07111f",
   "categories": ["health", "fitness", "lifestyle"],
-  "icons": []
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
