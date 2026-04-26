@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <title>Modo 98</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --card2: #1f2937;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --line: #374151;
+      --green: #22c55e;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --blue: #38bdf8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #020617, var(--bg));
+      color: var(--text);
+      padding-bottom: 88px;
+    }
+    header {
+      padding: 22px 18px 10px;
+      position: sticky;
+      top: 0;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(12px);
+      z-index: 3;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    h1 { margin: 0; font-size: 30px; letter-spacing: -0.04em; }
+    .sub { color: var(--muted); margin-top: 4px; font-size: 14px; }
+    main { padding: 14px; max-width: 680px; margin: 0 auto; }
+    .card {
+      background: rgba(17, 24, 39, .92);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 16px;
+      margin: 12px 0;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    }
+    .row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .title { font-size: 18px; font-weight: 750; margin-bottom: 8px; }
+    .big { font-size: 34px; font-weight: 800; letter-spacing: -0.05em; }
+    .muted { color: var(--muted); }
+    button, input, select, textarea {
+      font: inherit;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: var(--card2);
+      color: var(--text);
+      padding: 12px 14px;
+    }
+    button { cursor: pointer; font-weight: 700; border: 0; }
+    .btn { background: #334155; }
+    .btn-primary { background: var(--blue); color:#03121c; }
+    .btn-good { background: rgba(34,197,94,.18); color:#86efac; border:1px solid rgba(34,197,94,.28); }
+    .btn-warn { background: rgba(245,158,11,.18); color:#fcd34d; border:1px solid rgba(245,158,11,.28); }
+    .btn-red { background: rgba(239,68,68,.18); color:#fca5a5; border:1px solid rgba(239,68,68,.28); }
+    .grid { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    .grid3 { display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
+    .habit {
+      display:flex; align-items:center; gap:12px;
+      padding: 12px;
+      background: rgba(31,41,55,.75);
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      margin: 8px 0;
+    }
+    .check {
+      width:28px; height:28px; border-radius:9px;
+      border:2px solid #64748b;
+      display:flex; align-items:center; justify-content:center;
+      flex: 0 0 auto;
+    }
+    .habit.done .check { background: var(--green); border-color: var(--green); color:#022c22; }
+    .habit.done span { text-decoration: line-through; color:#a7f3d0; }
+    .tabs {
+      position: fixed; left:0; right:0; bottom:0; z-index:4;
+      display:grid; grid-template-columns: repeat(5,1fr);
+      background: rgba(2,6,23,.96);
+      border-top:1px solid rgba(255,255,255,0.1);
+      padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+      backdrop-filter: blur(12px);
+    }
+    .tab {
+      font-size: 12px; color: var(--muted);
+      background: transparent; padding:8px 2px;
+      border-radius: 12px;
+    }
+    .tab.active { color: var(--text); background: rgba(56,189,248,.15); }
+    .hidden { display:none; }
+    .pill { padding: 6px 10px; border-radius: 999px; font-size: 13px; font-weight: 800; }
+    .pill.green { background: rgba(34,197,94,.18); color:#86efac; }
+    .pill.yellow { background: rgba(245,158,11,.18); color:#fcd34d; }
+    .pill.red { background: rgba(239,68,68,.18); color:#fca5a5; }
+    .list { display:flex; flex-direction:column; gap:8px; margin-top: 10px; }
+    .item { padding:10px 12px; border-radius:14px; background:rgba(31,41,55,.65); color:var(--muted); font-size:14px; }
+    input[type="number"] { width:100%; }
+    .danger-link { background: transparent; color:#fca5a5; padding: 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Modo 98</h1>
+    <div class="sub" id="todayLabel">Tu sistema diario para bajar a 98 kg</div>
+  </header>
+
+  <main>
+    <section id="view-hoy"></section>
+    <section id="view-comida" class="hidden"></section>
+    <section id="view-alcohol" class="hidden"></section>
+    <section id="view-entreno" class="hidden"></section>
+    <section id="view-progreso" class="hidden"></section>
+  </main>
+
+  <nav class="tabs">
+    <button class="tab active" onclick="showView('hoy')">Hoy</button>
+    <button class="tab" onclick="showView('comida')">Comida</button>
+    <button class="tab" onclick="showView('alcohol')">Alcohol</button>
+    <button class="tab" onclick="showView('entreno')">Entreno</button>
+    <button class="tab" onclick="showView('progreso')">Progreso</button>
+  </nav>
+
+<script>
+const KEY = 'modo98-data-v1';
+const habits = [
+  'Caminar 8.000 pasos / 5 km',
+  'Proteína en comida y cena',
+  'Verdura o ensalada en 2 comidas',
+  'Alcohol dentro del límite',
+  'Entrenamiento o movilidad',
+  'Dormir a la hora objetivo'
+];
+const alcoholTypes = ['Vermut', 'Copa de vino', 'Gin-tonic', 'Cerveza', 'Otro'];
+const snackRed = ['Fuet', 'Patatas fritas', 'Bollería / ultraprocesado'];
+const snackGood = ['Yogur griego', 'Queso fresco', 'Frutos secos controlados', 'Otro'];
+
+function iso(d = new Date()) { return d.toISOString().slice(0,10); }
+function weekStart(d = new Date()) {
+  const x = new Date(d); const day = (x.getDay() + 6) % 7;
+  x.setDate(x.getDate() - day); x.setHours(0,0,0,0); return x;
+}
+function load() {
+  return JSON.parse(localStorage.getItem(KEY) || '{"days":{},"alcohol":[],"meals":[],"workouts":[],"weights":[]}');
+}
+function save(data) { localStorage.setItem(KEY, JSON.stringify(data)); }
+function today(data) {
+  const id = iso();
+  if (!data.days[id]) data.days[id] = { habits: {}, sleepHours: '', sleepQuality: 'Regular', backPain: 0 };
+  return data.days[id];
+}
+function thisWeekEntries(items) {
+  const start = weekStart().getTime();
+  return items.filter(x => new Date(x.date).getTime() >= start);
+}
+function countWeeklyAlcohol(data) { return thisWeekEntries(data.alcohol).reduce((a,x)=>a + Number(x.qty || 1), 0); }
+function completedHabits(day) { return habits.filter(h => day.habits[h]).length; }
+
+function render() {
+  const data = load();
+  document.getElementById('todayLabel').textContent = new Date().toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long' });
+  renderToday(data); renderFood(data); renderAlcohol(data); renderWorkout(data); renderProgress(data);
+}
+function renderToday(data) {
+  const d = today(data); const done = completedHabits(d); const alcohol = countWeeklyAlcohol(data);
+  const status = done >= 5 ? 'green' : done >= 3 ? 'yellow' : 'red';
+  document.getElementById('view-hoy').innerHTML = `
+    <div class="card">
+      <div class="row"><div><div class="title">Hoy</div><div class="muted">Objetivo: cumplir 5 de 6 hábitos</div></div><span class="pill ${status}">${done}/6</span></div>
+      ${habits.map(h => `<div class="habit ${d.habits[h] ? 'done':''}" onclick="toggleHabit('${h.replaceAll("'", "\\'")}')"><div class="check">${d.habits[h] ? '✓' : ''}</div><span>${h}</span></div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="title">Acciones rápidas</div>
+      <div class="grid">
+        <button class="btn-primary" onclick="showView('alcohol')">+ Alcohol</button>
+        <button class="btn-primary" onclick="showView('comida')">+ Comida</button>
+        <button class="btn" onclick="showView('entreno')">+ Entreno</button>
+        <button class="btn" onclick="showView('progreso')">+ Peso</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="title">Coach de hoy</div>
+      <div class="muted">${coachMessage(data)}</div>
+      <div class="item">Alcohol semanal: ${alcohol}/4</div>
+    </div>`;
+}
+function coachMessage(data) {
+  const alcohol = countWeeklyAlcohol(data); const d = today(data);
+  if (Number(d.backPain) >= 7) return 'Dolor lumbar alto: hoy nada de cargas. Camina suave y haz movilidad.';
+  if (alcohol > 4) return 'Ya superaste el límite de alcohol. No castigamos: mañana proteína, agua, caminar y dormir.';
+  if (alcohol >= 3) return 'Vas cerca del límite de alcohol. Prioridad: no sumar más esta semana.';
+  if (completedHabits(d) >= 5) return 'Día muy sólido. Mantén el plan sin buscar perfección.';
+  return 'Foco simple: caminar, proteína en las dos comidas y alcohol controlado.';
+}
+function toggleHabit(h) { const data=load(); const d=today(data); d.habits[h]=!d.habits[h]; save(data); render(); }
+
+function renderAlcohol(data) {
+  const total = countWeeklyAlcohol(data); const pill = total <= 2 ? 'green' : total <= 4 ? 'yellow' : 'red';
+  const week = thisWeekEntries(data.alcohol);
+  document.getElementById('view-alcohol').innerHTML = `
+    <div class="card"><div class="row"><div><div class="title">Alcohol semanal</div><div class="muted">Límite inicial: 4 bebidas/semana</div></div><span class="pill ${pill}">${total}/4</span></div></div>
+    <div class="card"><div class="title">Añadir bebida</div><div class="grid">${alcoholTypes.map(t=>`<button class="btn" onclick="addAlcohol('${t}')">${t}</button>`).join('')}</div></div>
+    <div class="card"><div class="title">Esta semana</div><div class="list">${week.length ? week.slice().reverse().map(x=>`<div class="item">${new Date(x.date).toLocaleDateString('es-ES')} · ${x.type}</div>`).join('') : '<div class="muted">Sin alcohol registrado esta semana.</div>'}</div></div>`;
+}
+function addAlcohol(type) { const data=load(); data.alcohol.push({date:new Date().toISOString(), type, qty:1}); save(data); render(); }
+
+function renderFood(data) {
+  const week = thisWeekEntries(data.meals);
+  document.getElementById('view-comida').innerHTML = `
+    <div class="card"><div class="title">Registrar comida</div>
+      <div class="grid3"><button class="btn-good" onclick="addMeal('Bien')">Bien</button><button class="btn-warn" onclick="addMeal('Regular')">Regular</button><button class="btn-red" onclick="addMeal('Me he pasado')">Me he pasado</button></div>
+    </div>
+    <div class="card"><div class="title">Snack rápido</div>
+      <div class="grid">${snackRed.map(s=>`<button class="btn-red" onclick="addSnack('${s}')">${s}</button>`).join('')}${snackGood.map(s=>`<button class="btn-good" onclick="addSnack('${s}')">${s}</button>`).join('')}</div>
+    </div>
+    <div class="card"><div class="title">Registros de la semana</div><div class="list">${week.length ? week.slice().reverse().map(x=>`<div class="item">${new Date(x.date).toLocaleDateString('es-ES')} · ${x.type}: ${x.rating || x.snack}</div>`).join('') : '<div class="muted">Aún no hay registros.</div>'}</div></div>`;
+}
+function addMeal(rating) { const data=load(); data.meals.push({date:new Date().toISOString(), type:'Comida/Cena', rating}); save(data); render(); }
+function addSnack(snack) { const data=load(); data.meals.push({date:new Date().toISOString(), type:'Snack', snack}); save(data); render(); }
+
+function renderWorkout(data) {
+  const d = today(data);
+  const rec = Number(d.backPain) >= 7 ? 'Movilidad + caminata. Sin cargas.' : Number(d.backPain) >= 4 ? 'Entreno suave con máquinas y sin cargar lumbar.' : 'Entreno normal.';
+  document.getElementById('view-entreno').innerHTML = `
+    <div class="card"><div class="title">Espalda baja hoy</div><div class="row"><input type="number" min="0" max="10" value="${d.backPain}" onchange="setBackPain(this.value)"><span class="pill ${Number(d.backPain)>=7?'red':Number(d.backPain)>=4?'yellow':'green'}">${d.backPain}/10</span></div><div class="item">${rec}</div></div>
+    <div class="card"><div class="title">Fuerza A</div><div class="list"><div class="item">Prensa piernas · 3x10</div><div class="item">Jalón al pecho · 3x10</div><div class="item">Press pecho máquina · 3x10</div><div class="item">Remo sentado · 3x10</div><div class="item">Puente de glúteo · 3x12</div><div class="item">Dead bug · 3x8/lado</div></div><button class="btn-primary" style="width:100%;margin-top:12px" onclick="addWorkout('Fuerza A')">Marcar Fuerza A hecha</button></div>
+    <div class="card"><div class="title">Fuerza B</div><div class="list"><div class="item">Prensa o goblet ligera · 3x10</div><div class="item">Press hombro máquina · 3x10</div><div class="item">Remo máquina · 3x10</div><div class="item">Curl femoral · 3x12</div><div class="item">Pallof press · 3x10/lado</div><div class="item">Plancha lateral · 3x20–30s</div></div><button class="btn-primary" style="width:100%;margin-top:12px" onclick="addWorkout('Fuerza B')">Marcar Fuerza B hecha</button></div>`;
+}
+function setBackPain(v) { const data=load(); today(data).backPain=Math.max(0,Math.min(10,Number(v)||0)); save(data); render(); }
+function addWorkout(type) { const data=load(); data.workouts.push({date:new Date().toISOString(), type, backPain: today(data).backPain}); today(data).habits['Entrenamiento o movilidad'] = true; save(data); render(); }
+
+function renderProgress(data) {
+  const alcohol = countWeeklyAlcohol(data); const workouts = thisWeekEntries(data.workouts).length; const weekMeals = thisWeekEntries(data.meals).length;
+  const latestWeight = data.weights.length ? data.weights[data.weights.length-1].kg : '105';
+  document.getElementById('view-progreso').innerHTML = `
+    <div class="card"><div class="title">Peso</div><div class="big">${latestWeight} kg</div><div class="muted">Objetivo fase 1: 98 kg</div><div class="row" style="margin-top:12px"><input id="weightInput" type="number" step="0.1" placeholder="Peso de hoy"><button class="btn-primary" onclick="addWeight()">Guardar</button></div></div>
+    <div class="card"><div class="title">Semana actual</div><div class="list"><div class="item">Alcohol: ${alcohol}/4</div><div class="item">Entrenos: ${workouts}/3</div><div class="item">Registros comida/snack: ${weekMeals}</div><div class="item">Prioridad: alcohol controlado + 3 fuerzas + dormir 30 min más</div></div></div>
+    <div class="card"><div class="title">Datos</div><button class="danger-link" onclick="resetData()">Borrar todos los datos</button></div>`;
+}
+function addWeight() { const el=document.getElementById('weightInput'); const kg=Number(el.value); if(!kg) return; const data=load(); data.weights.push({date:new Date().toISOString(), kg}); save(data); render(); }
+function resetData() { if(confirm('¿Seguro que quieres borrar todos los datos?')) { localStorage.removeItem(KEY); render(); } }
+
+function showView(name) {
+  ['hoy','comida','alcohol','entreno','progreso'].forEach(v => document.getElementById('view-'+v).classList.toggle('hidden', v!==name));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  const labels = {hoy:0, comida:1, alcohol:2, entreno:3, progreso:4};
+  document.querySelectorAll('.tab')[labels[name]].classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+render();
+</script>
+</body>
+</html>
