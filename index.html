@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#07111f" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<title>Modo 98</title>
+<meta name="apple-mobile-web-app-title" content="PauFit" />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="icon.png" />
+<title>PauFit</title>
 
 <style>
 :root{
@@ -19,6 +22,8 @@ body{
   background:linear-gradient(180deg,#07111f,var(--bg));color:var(--text);padding-bottom:90px
 }
 header{padding:24px 18px 8px}
+.logoRow{display:flex;align-items:center;gap:14px}
+.logo{width:58px;height:58px;border-radius:18px;object-fit:cover}
 h1{margin:0;font-size:36px}
 h2,h3{margin-top:0}
 a{color:var(--blue);font-weight:800;text-decoration:none}
@@ -49,12 +54,16 @@ input,textarea{
 }
 textarea{min-height:80px}
 .photoBox{
-  min-height:160px;border:1px dashed var(--line);border-radius:20px;
-  display:grid;place-items:center;overflow:hidden
+  min-height:180px;border:1px dashed var(--line);border-radius:20px;
+  display:grid;place-items:center;overflow:hidden;background:#020617
 }
 .photoBox img{width:100%}
 input[type=file]{display:none}
 .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.08);font-size:13px}
+.aiBox{
+  background:rgba(56,189,248,.09);border:1px solid rgba(56,189,248,.2);
+  border-radius:18px;padding:14px;margin-top:12px
+}
 .page{display:none}
 .page.active{display:block}
 nav{
@@ -69,8 +78,13 @@ nav button.active{background:var(--blue);color:#00111a}
 
 <body>
 <header>
-  <h1>Modo 98</h1>
-  <p class="muted">Bajar grasa. Entrenar fuerza. Controlar alcohol. Dormir mejor.</p>
+  <div class="logoRow">
+    <img src="icon.png" class="logo" alt="PauFit logo">
+    <div>
+      <h1>PauFit</h1>
+      <p class="muted">Comida, fuerza, alcohol y progreso.</p>
+    </div>
+  </div>
 </header>
 
 <main class="container">
@@ -95,12 +109,15 @@ nav button.active{background:var(--blue);color:#00111a}
 
 <section id="comida" class="page">
   <div class="card">
-    <h3>Foto comida</h3>
-    <div class="photoBox" id="photoPreview"><span class="muted">Haz o sube foto</span></div>
+    <h3>Foto comida + IA</h3>
+    <div class="photoBox" id="photoPreview"><span class="muted">Haz o sube foto del plato</span></div>
     <br>
     <button class="primary" onclick="document.getElementById('foodPhoto').click()">Hacer foto</button>
     <input id="foodPhoto" type="file" accept="image/*" capture="environment" onchange="previewFoodPhoto(event)">
     <button onclick="clearPhoto()">Quitar foto</button>
+    <br><br>
+    <button class="purple" onclick="analyzeFood()">Analizar con IA</button>
+    <div id="aiResult" class="aiBox muted">Sube una foto y pulsa “Analizar con IA”.</div>
   </div>
 
   <div class="card">
@@ -266,11 +283,12 @@ const WORKOUTS={
   }
 };
 
-const KEY="modo98.v5";
+const KEY="paufit.v1";
 let state=JSON.parse(localStorage.getItem(KEY))||{days:{},drinks:[],meals:[],workouts:[],weights:[]};
 let activeWorkout=localStorage.getItem("activeWorkout")||null;
 let exerciseChecks=JSON.parse(localStorage.getItem("exerciseChecks")||"{}");
 let pendingPhoto=null;
+let lastAI=null;
 let timerInterval=null;
 
 function todayKey(){return new Date().toISOString().slice(0,10)}
@@ -307,26 +325,93 @@ function undoDrink(){state.drinks.pop();save()}
 
 function addMeal(rating){
   let note=document.getElementById("mealNote").value.trim();
-  state.meals.unshift({rating,note,date:new Date().toISOString(),label:new Date().toLocaleString("es-ES")});
+  state.meals.unshift({
+    rating,
+    note,
+    ai:lastAI,
+    date:new Date().toISOString(),
+    label:new Date().toLocaleString("es-ES")
+  });
   if(rating==="Bien"){habits()[1]=true;habits()[2]=true}
   document.getElementById("mealNote").value="";
   clearPhoto();
+  lastAI=null;
+  document.getElementById("aiResult").innerHTML="Sube una foto y pulsa “Analizar con IA”.";
   save();
 }
 
 function previewFoodPhoto(e){
   let file=e.target.files[0]; if(!file)return;
-  let reader=new FileReader();
-  reader.onload=x=>{
-    pendingPhoto=x.target.result;
+  resizeImage(file, 900, 0.75).then(dataUrl=>{
+    pendingPhoto=dataUrl;
     document.getElementById("photoPreview").innerHTML=`<img src="${pendingPhoto}">`;
-  };
-  reader.readAsDataURL(file);
+  });
 }
+
+function resizeImage(file,maxSize,quality){
+  return new Promise((resolve)=>{
+    const img=new Image();
+    const reader=new FileReader();
+    reader.onload=e=>{img.src=e.target.result};
+    img.onload=()=>{
+      let w=img.width,h=img.height;
+      if(w>h && w>maxSize){h=Math.round(h*maxSize/w);w=maxSize}
+      else if(h>maxSize){w=Math.round(w*maxSize/h);h=maxSize}
+      const canvas=document.createElement("canvas");
+      canvas.width=w;canvas.height=h;
+      canvas.getContext("2d").drawImage(img,0,0,w,h);
+      resolve(canvas.toDataURL("image/jpeg",quality));
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 function clearPhoto(){
   pendingPhoto=null;
   document.getElementById("foodPhoto").value="";
-  document.getElementById("photoPreview").innerHTML='<span class="muted">Haz o sube foto</span>';
+  document.getElementById("photoPreview").innerHTML='<span class="muted">Haz o sube foto del plato</span>';
+}
+
+async function analyzeFood(){
+  if(!pendingPhoto){
+    alert("Primero sube o haz una foto.");
+    return;
+  }
+
+  const box=document.getElementById("aiResult");
+  box.innerHTML="Analizando comida con IA...";
+
+  try{
+    const res=await fetch("/api/analyze-food",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({image:pendingPhoto})
+    });
+
+    const data=await res.json();
+
+    if(!res.ok){
+      throw new Error(data.error || "Error analizando comida");
+    }
+
+    lastAI=data;
+
+    box.innerHTML=`
+      <b>Valoración:</b> ${data.rating}<br><br>
+      <b>Calorías:</b> ${data.calories_estimate} kcal<br>
+      <b>Proteína:</b> ${data.protein_estimate} g<br>
+      <b>Carbohidratos:</b> ${data.carbs_estimate} g<br>
+      <b>Grasas:</b> ${data.fat_estimate} g<br><br>
+      <b>Detectado:</b> ${(data.foods_detected||[]).join(", ")}<br><br>
+      <b>Veredicto PauFit:</b><br>${data.paufit_verdict}
+    `;
+
+    document.getElementById("mealNote").value =
+      `IA: ${data.calories_estimate} kcal, ${data.protein_estimate}g proteína. ${data.paufit_verdict}`;
+
+  }catch(err){
+    box.innerHTML="Error: " + err.message;
+  }
 }
 
 function startWorkout(type){
@@ -436,7 +521,10 @@ function render(){
   document.getElementById("drinkMsg").innerText=drinks.length<=2?"Vas bien.":drinks.length<=4?"Cerca del límite.":"Has superado el límite.";
   document.getElementById("drinkList").innerHTML=drinks.length?drinks.map(x=>`<div class="row"><span>${x.type}</span><span class="pill">${x.label}</span></div>`).join(""):"Sin bebidas esta semana.";
 
-  document.getElementById("mealList").innerHTML=state.meals.length?state.meals.map(x=>`<div class="row"><div><b>${x.rating}</b><br><span class="muted">${x.note||"Sin nota"}</span></div><span class="pill">${x.label}</span></div>`).join(""):"Sin comidas.";
+  document.getElementById("mealList").innerHTML=state.meals.length?state.meals.map(x=>{
+    let ai=x.ai?`<br><span class="muted">${x.ai.calories_estimate} kcal · ${x.ai.protein_estimate}g proteína</span>`:"";
+    return `<div class="row"><div><b>${x.rating}</b>${ai}<br><span class="muted">${x.note||"Sin nota"}</span></div><span class="pill">${x.label}</span></div>`;
+  }).join(""):"Sin comidas.";
 
   let workouts=weeklyWorkouts();
   document.getElementById("workoutList").innerHTML=workouts.length?workouts.map(x=>`<div class="row"><span>${x.type}</span><span class="pill">${x.label}</span></div>`).join(""):"Sin entrenos esta semana.";
