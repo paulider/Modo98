@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "PauFit",
+    "slug": "paufit",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./icon.png",
+    "userInterfaceStyle": "automatic",
+    "scheme": "paufit",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.paucols.paufit",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSCameraUsageDescription": "PauFit usa la cámara para analizar fotos de comida.",
+        "NSPhotoLibraryUsageDescription": "PauFit usa tu galería para analizar fotos de comida."
+      }
+    },
+    "android": {
+      "package": "com.paucols.paufit",
+      "versionCode": 1,
+      "permissions": [
+        "CAMERA",
+        "READ_MEDIA_IMAGES"
+      ]
+    },
+    "web": {
+      "favicon": "./icon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "REPLACE_WITH_EAS_PROJECT_ID"
+      }
+    }
+  }
+}
