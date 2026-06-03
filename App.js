@@ -12,6 +12,12 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import { StatusBar } from 'expo-status-bar';
 
+const appTabs = [
+  { key: 'nutrition', label: 'Nutricio' },
+  { key: 'routines', label: 'Rutines' },
+  { key: 'progress', label: 'Progres' }
+];
+
 const routineDays = [
   {
     title: 'Dia A',
@@ -122,6 +128,7 @@ const priorityExercises = [
 ];
 
 export default function App() {
+  const [activeTab, setActiveTab] = useState('nutrition');
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState(null);
@@ -174,6 +181,19 @@ export default function App() {
       <StatusBar style='light' />
 
       <Text style={styles.title}>PauFit</Text>
+
+      <View style={styles.tabs}>
+        {appTabs.map((tab) => (
+          <TouchableOpacity
+            key={tab.key}
+            style={[styles.tab, activeTab === tab.key && styles.activeTab]}
+            onPress={() => setActiveTab(tab.key)}
+          >
+            <Text style={[styles.tabText, activeTab === tab.key && styles.activeTabText]}>{tab.label}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
       <Text style={styles.subtitle}>
         Analiza tu comida con IA
       </Text>
@@ -276,6 +296,32 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 30,
     fontSize: 16
+  },
+  tabs: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 24,
+    marginBottom: 22
+  },
+  tab: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#1b2a3f',
+    paddingVertical: 12,
+    borderRadius: 14,
+    alignItems: 'center'
+  },
+  activeTab: {
+    backgroundColor: '#00ff99',
+    borderColor: '#00ff99'
+  },
+  tabText: {
+    color: '#8b9bb4',
+    fontWeight: '700',
+    fontSize: 13
+  },
+  activeTabText: {
+    color: '#050914'
   },
   button: {
     backgroundColor: '#00ff99',
