@@ -13,9 +13,9 @@ import * as ImagePicker from 'expo-image-picker';
 import { StatusBar } from 'expo-status-bar';
 
 const appTabs = [
-  { key: 'nutrition', label: 'Nutricio' },
+  { key: 'nutrition', label: 'Nutrició' },
   { key: 'routines', label: 'Rutines' },
-  { key: 'progress', label: 'Progres' }
+  { key: 'progress', label: 'Progrés' }
 ];
 
 const routineDays = [
@@ -23,40 +23,40 @@ const routineDays = [
     title: 'Dia A',
     exercises: [
       {
-        name: 'Jalon al pit / Lat Pulldown',
-        prescription: '3 series x 10-12 repeticions',
+        name: 'Jaló al pit / Lat Pulldown',
+        prescription: '3 sèries x 10-12 repeticions',
         focus: 'Dorsal ample, espatlles i postura.',
-        tutorial: 'Seu amb el pit obert i esquena neutra. Agafa la barra una mica mes ampla que les espatlles. Baixa cap a la part alta del pit portant els colzes cap avall. Evita tirar amb el coll o arquejar la lumbar.'
+        tutorial: 'Seu amb el pit obert i esquena neutra. Agafa la barra una mica més ampla que les espatlles. Baixa cap a la part alta del pit portant els colzes cap avall. Evita tirar amb el coll o arquejar la lumbar.'
       },
       {
-        name: 'Press de pit amb maquina o manuelles inclinades',
+        name: 'Press de pit amb màquina o manuelles inclinades',
         prescription: '3 x 10-12',
-        focus: 'Opcio mes segura que barra lliure si hi ha historial lumbar.',
+        focus: 'Opció més segura que barra lliure si hi ha historial lumbar.',
         tutorial: 'Mantingues esquena recolzada i peus estables. Baixa amb control fins que els colzes quedin lleugerament per sota de l espatlla. Puja sense bloquejar agressivament els colzes ni aixecar la lumbar.'
       },
       {
         name: 'Rem assegut amb politja',
         prescription: '3 x 10-12',
-        focus: 'Compensa hores assegut i reforca esquena mitjana.',
-        tutorial: 'Seu alt, columna neutra. Inicia amb les escapules lleugerament enrere i porta el cable cap a abdomen superior o part baixa del pit. No facis impuls amb la lumbar.'
+        focus: 'Compensa hores assegut i reforça esquena mitjana.',
+        tutorial: 'Seu alt, columna neutra. Inicia amb les escàpules lleugerament enrere i porta el cable cap a abdomen superior o part baixa del pit. No facis impuls amb la lumbar.'
       },
       {
-        name: 'Curl de biceps amb manuelles',
+        name: 'Curl de bíceps amb manuelles',
         prescription: '3 x 10-12',
-        focus: 'Biceps amb control i sense compensacions.',
+        focus: 'Bíceps amb control i sense compensacions.',
         tutorial: 'Colzes enganxats al cos. Puja sense balancejar el tronc i controla la baixada. Prioritza recorregut net abans que pes.'
       },
       {
         name: 'Face Pull',
         prescription: '3 x 15',
-        focus: 'Deltoide posterior, romboides i part alta de l esquena. Ajuda amb espatlles avancades.',
+        focus: 'Deltoide posterior, romboides i part alta de l esquena. Ajuda amb espatlles avançades.',
         tutorial: 'Usa corda a l altura de la cara. Estira cap al front o nas i obre la corda al final. Mantingues colzes alts sense tensar el coll ni arquejar la lumbar.'
       },
       {
         name: 'Planxa',
         prescription: '3 x 30-45 segons',
         focus: 'Core sense carregar la lumbar.',
-        tutorial: 'Colzes sota espatlles i cos en linia recta. Abdomen actiu i glutis lleugerament contrets. Atura la serie si notes carrega directa a la lumbar.'
+        tutorial: 'Colzes sota espatlles i cos en línia recta. Abdomen actiu i glutis lleugerament contrets. Atura la sèrie si notes càrrega directa a la lumbar.'
       }
     ]
   },
@@ -64,10 +64,10 @@ const routineDays = [
     title: 'Dia B',
     exercises: [
       {
-        name: 'Rem amb maquina suportada al pit',
+        name: 'Rem amb màquina suportada al pit',
         prescription: '3 x 10-12',
-        focus: 'Treball d esquena evitant carrega lumbar.',
-        tutorial: 'Pit ben recolzat al suport. Estira portant colzes enrere i fes una pausa curta quan les escapules s ajunten. Baixa controlant sense separar el pit del suport.'
+        focus: 'Treball d esquena evitant càrrega lumbar.',
+        tutorial: 'Pit ben recolzat al suport. Estira portant colzes enrere i fes una pausa curta quan les escàpules s ajunten. Baixa controlant sense separar el pit del suport.'
       },
       {
         name: 'Press de pit horitzontal',
@@ -76,38 +76,38 @@ const routineDays = [
         tutorial: 'Esquena i cap recolzats, peus ferms. Baixa amb control, mantingues espatlles estables i puja sense bloquejar de forma agressiva.'
       },
       {
-        name: 'Jalon amb agafada neutra',
+        name: 'Jaló amb agafada neutra',
         prescription: '3 x 10-12',
-        focus: 'Dorsal i biceps amb millor confort articular.',
+        focus: 'Dorsal i bíceps amb millor confort articular.',
         tutorial: 'Agafa les nanses amb palmells mirant-se. Baixa cap a la part alta del pit portant colzes cap avall i lleugerament enrere. No compensis tirant el cos enrere.'
       },
       {
         name: 'Curl martell',
         prescription: '3 x 10-12',
-        focus: 'Biceps i avantbrac.',
+        focus: 'Bíceps i avantbraç.',
         tutorial: 'Palmells mirant-se durant tot el moviment. Colzes quiets al costat del cos. Puja sense balanceig i baixa lentament, evitant carregar trapezi.'
       },
       {
-        name: 'Reverse Fly amb maquina o cables',
+        name: 'Reverse Fly amb màquina o cables',
         prescription: '3 x 15',
         focus: 'Postura, deltoide posterior i esquena alta.',
-        tutorial: 'Pit obert i bracos lleugerament flexionats. Obre fins notar treball a la part posterior de l espatlla. No facis impuls ni forcis la lumbar.'
+        tutorial: 'Pit obert i braços lleugerament flexionats. Obre fins notar treball a la part posterior de l espatlla. No facis impuls ni forcis la lumbar.'
       },
       {
         name: 'Bird Dog',
         prescription: '3 x 10 per costat',
-        focus: 'Estabilitzacio lumbar.',
-        tutorial: 'Mans sota espatlles i genolls sota malucs. Esten brac i cama contraria mantenint pelvis estable. Moviment lent, sense arquejar la lumbar.'
+        focus: 'Estabilització lumbar.',
+        tutorial: 'Mans sota espatlles i genolls sota malucs. Estén braç i cama contrària mantenint pelvis estable. Moviment lent, sense arquejar la lumbar.'
       }
     ]
   }
 ];
 
 const quickCircuit = [
-  'Jalon al pit',
+  'Jaló al pit',
   'Press pit',
   'Rem assegut',
-  'Curl biceps',
+  'Curl bíceps',
   'Face Pull'
 ];
 
@@ -120,7 +120,7 @@ const avoidExercises = [
 ];
 
 const priorityExercises = [
-  'Jalon al pit',
+  'Jaló al pit',
   'Rem assegut',
   'Face Pull',
   'Press de pit',
@@ -137,7 +137,7 @@ export default function App() {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (!permission.granted) {
-      Alert.alert('Permiso requerido', 'Necesitamos acceso a tus fotos');
+      Alert.alert('Permís requerit', 'Necessitem accés a les teves fotos');
       return;
     }
 
@@ -169,7 +169,7 @@ export default function App() {
       const data = await response.json();
       setAnalysis(data);
     } catch (error) {
-      Alert.alert('Error', 'No se pudo analizar la comida');
+      Alert.alert('Error', 'No s ha pogut analitzar el menjar');
       console.error(error);
     } finally {
       setLoading(false);
@@ -195,11 +195,11 @@ export default function App() {
       </View>
 
       <Text style={styles.subtitle}>
-        Analiza tu comida con IA
+        Analitza el teu menjar amb IA
       </Text>
 
       <TouchableOpacity style={styles.button} onPress={pickImage}>
-        <Text style={styles.buttonText}>Subir comida</Text>
+        <Text style={styles.buttonText}>Pujar menjar</Text>
       </TouchableOpacity>
 
       {image && (
@@ -214,13 +214,13 @@ export default function App() {
         <View style={styles.card}>
           <Text style={styles.rating}>{analysis.rating}</Text>
 
-          <Text style={styles.sectionTitle}>Calorias</Text>
+          <Text style={styles.sectionTitle}>Calories</Text>
           <Text style={styles.text}>{analysis.calories_estimate} kcal</Text>
 
-          <Text style={styles.sectionTitle}>Proteina</Text>
+          <Text style={styles.sectionTitle}>Proteïna</Text>
           <Text style={styles.text}>{analysis.protein_estimate} g</Text>
 
-          <Text style={styles.sectionTitle}>Veredicto</Text>
+          <Text style={styles.sectionTitle}>Veredicte</Text>
           <Text style={styles.text}>{analysis.paufit_verdict}</Text>
         </View>
       )}
@@ -229,7 +229,7 @@ export default function App() {
         <Text style={styles.kicker}>Modo98 v1.1</Text>
         <Text style={styles.routineTitle}>Rutina superior lumbar-safe</Text>
         <Text style={styles.text}>
-          Alterna Dia A i Dia B durant 2-3 dies per setmana. Objectiu: 60% esquena i postura, 40% pit i bracos. Descans recomanat: 60-90 segons.
+          Alterna Dia A i Dia B durant 2-3 dies per setmana. Objectiu: 60% esquena i postura, 40% pit i braços. Descans recomanat: 60-90 segons.
         </Text>
       </View>
 
@@ -249,7 +249,7 @@ export default function App() {
       ))}
 
       <View style={styles.card}>
-        <Text style={styles.dayTitle}>Si nomes tens 30 minuts</Text>
+        <Text style={styles.dayTitle}>Si només tens 30 minuts</Text>
         <Text style={styles.text}>Fes aquest circuit: 3 rondes, 10-12 repeticions, descans 60-90 segons.</Text>
         {quickCircuit.map((item, index) => (
           <Text key={item} style={styles.listItem}>{index + 1}. {item}</Text>
@@ -264,12 +264,12 @@ export default function App() {
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.dayTitle}>Exercicis amb mes retorn</Text>
+        <Text style={styles.dayTitle}>Exercicis amb més retorn</Text>
         {priorityExercises.map((item, index) => (
           <Text key={item} style={styles.listItem}>{index + 1}. {item}</Text>
         ))}
         <Text style={styles.text}>
-          Aquests cinc exercicis ajuden a tonificar pectoral, fer creixer biceps indirectament, enfortir esquena, millorar postura i protegir la lumbar.
+          Aquests cinc exercicis ajuden a tonificar pectoral, fer créixer bíceps indirectament, enfortir esquena, millorar postura i protegir la lumbar.
         </Text>
       </View>
     </ScrollView>
